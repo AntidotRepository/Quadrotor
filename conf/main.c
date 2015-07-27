@@ -1,8 +1,16 @@
 #include "ch.h"
 #include "hal.h"
+#include "alti.h"
 
-static WORKING_AREA(waThread1, 128);
-static msg_t Thread1(void *arg);
+// I2C Configuration
+static const I2CConfig g_i2ccfg = 
+{
+	OPMODE_I2C,
+	I2C_CLK_SPEED,
+	FAST_DUTY_CYCLE_16_9
+};
+
+static WORKING_AREA(waAlti, 512);
 
 int main(void)
 {
@@ -10,8 +18,18 @@ int main(void)
 	halInit();
 	chSysInit();
 	
+	/*
+	* I²C initialization
+	*/
+	//I²C 2
+	palSetPadMode(GPIOB, 7, PAL_MODE_ALTERNATE(4) | PAL_STM32_OTYPE_OPENDRAIN);	 /* SCL */
+	palSetPadMode(GPIOB, 6, PAL_MODE_ALTERNATE(4) | PAL_STM32_OTYPE_OPENDRAIN);	 /* SDA */
+	i2cInit();
+	i2cObjectInit(&I2CD1);
+	i2cStart(&I2CD1, &g_i2ccfg);
+	
 	/* Create one more task */
-	chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+	chThdCreateStatic(waAlti, sizeof(waAlti), NORMALPRIO, ThreadAlti, NULL);
 	
 	/* Main task (always present and have priority NORMALPRIO) */
 	while(TRUE)
@@ -23,14 +41,4 @@ int main(void)
 	}
 }
 
-static msg_t Thread1(void *arg)
-{
-	/* Another task */
-	while(TRUE)
-	{
-		palSetPad(GPIOB, GPIOB_LED3);
-		chThdSleepMilliseconds(500);
-		palClearPad(GPIOB, GPIOB_LED3);
-		chThdSleepMilliseconds(500);
-	}
-}
+
