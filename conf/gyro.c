@@ -1,19 +1,30 @@
 #include "gyro.h"
 
+extern Mailbox mb_gyro;
+extern msg_t mb_gyro_buf[MB_MSG_SIZE];
+
 msg_t ThreadGyro( void *arg )
 {
+	msg_t msg;
+	
 	DATA_GYRO data;
 	initGyro();
 	
 	while(TRUE)
 	{		
 		// We get informations from sensor and store in it
-		data.angleRoulis 	= getAngle(REG_GYRO_X);
-		data.angleTangage = getAngle(REG_GYRO_Y);
-		data.angleLacet 	= getAngle(REG_GYRO_Z);
-		data.accTangage 	= getAcceleration(REG_ACCEL_X);
-		data.accRoulis 		= getAcceleration(REG_ACCEL_Y);
-		data.accLacet 		= getAcceleration(REG_ACCEL_Z);
+		msg = (msg_t)getAngle(REG_GYRO_X);
+		chMBPost(&mb_gyro, msg, TIME_IMMEDIATE);
+		msg = (msg_t)getAngle(REG_GYRO_Y);
+		chMBPost(&mb_gyro, msg, TIME_IMMEDIATE);
+		msg = (msg_t)getAngle(REG_GYRO_Z);
+		chMBPost(&mb_gyro, msg, TIME_IMMEDIATE);
+		msg = (msg_t)getAcceleration(REG_ACCEL_X);
+		chMBPost(&mb_gyro, msg, TIME_IMMEDIATE);
+		msg = (msg_t)getAcceleration(REG_ACCEL_Y);
+		chMBPost(&mb_gyro, msg, TIME_IMMEDIATE);
+		msg = (msg_t)getAcceleration(REG_ACCEL_Z);
+		chMBPost(&mb_gyro, msg, TIME_IMMEDIATE);
 		
 		chThdSleepMilliseconds(2.5); //Refresh rate @400Hz
 	}

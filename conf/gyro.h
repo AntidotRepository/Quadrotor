@@ -16,7 +16,10 @@ struct DATA_GYRO
 	double		accLacet;
 };
 
+#define MB_MSG_SIZE 6
+
 // Task prototype
+static WORKING_AREA(waGyro, 512);
 msg_t ThreadGyro( void *arg );
 	
 // Functions prototypes

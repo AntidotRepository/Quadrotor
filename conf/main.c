@@ -10,11 +10,13 @@ static const I2CConfig g_i2ccfg =
 	FAST_DUTY_CYCLE_16_9
 };
 
-// Working areas
-static WORKING_AREA(waGyro, 512);
+Mailbox mb_gyro;
+msg_t mb_gyro_buf[MB_MSG_SIZE];
 
 int main(void)
 {
+	msg_t msg;
+	volatile DATA_GYRO data_gyro;
 	/* OS init */
 	halInit();
 	chSysInit();
@@ -29,12 +31,26 @@ int main(void)
 	i2cObjectInit(&I2CD1);
 	i2cStart(&I2CD1, &g_i2ccfg);
 	
+	chMBInit(&mb_gyro, mb_gyro_buf, MB_MSG_SIZE);
+	
 	/* Create tasks */
 	chThdCreateStatic(waGyro, sizeof(waGyro), NORMALPRIO, ThreadGyro, NULL);
 	
 	/* Main task (always present and have priority NORMALPRIO) */
 	while(TRUE)
 	{
+		chMBFetch(&mb_gyro, &msg, TIME_INFINITE);
+		data_gyro.angleRoulis = (uint16_t)msg;
+		chMBFetch(&mb_gyro, &msg, TIME_INFINITE);
+		data_gyro.angleTangage = (uint16_t)msg;
+		chMBFetch(&mb_gyro, &msg, TIME_INFINITE);
+		data_gyro.angleLacet = (uint16_t)msg;
+		chMBFetch(&mb_gyro, &msg, TIME_INFINITE);
+		data_gyro.accRoulis = (double)msg;
+		chMBFetch(&mb_gyro, &msg, TIME_INFINITE);
+		data_gyro.accTangage = (double)msg;
+		chMBFetch(&mb_gyro, &msg, TIME_INFINITE);
+		data_gyro.accLacet = (double)msg;
 		chThdSleepMilliseconds(100);
 	}
 }
