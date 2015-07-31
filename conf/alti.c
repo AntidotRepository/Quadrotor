@@ -6,17 +6,24 @@ float altitude = 0;
 double pressure = 0;
 static long_BMP085_reg g_long_registres;
 static PressureVar variables;
-static float tabAlti[10] = {0};
+
+extern Mailbox mb_alti;
+extern msg_t mb_alti_buf[MB_MSG_SIZE];
 
 msg_t ThreadAlti( void *arg )
 {
-	volatile float alti = 0;
+	float alti = 0;
+	msg_t msg;
 	initAlti();
 	
 	while(TRUE)
 	{
 		alti = getAltitude();
-		chThdSleepMilliseconds( 100 );
+		
+		msg = (msg_t)&alti;
+		chMBPost(&mb_alti, msg, TIME_IMMEDIATE);
+		
+		chThdSleepMilliseconds( 100 ); // Refreshing @10Hz
 	}
 }
 
@@ -99,7 +106,7 @@ void initAlti()
 	BMP085_reg registres;
 	int i = 0;
 	
-	chThdSleepMilliseconds( 1000 );
+	//chThdSleepMilliseconds( 1000 );
 	//récupération de ac1
 	txbuf[0] = 0xAA; //Calibration data ac1
 	i2cAcquireBus(&I2CD1);
@@ -170,25 +177,17 @@ void initAlti()
 	g_long_registres.md = ((int16_t)((uint16_t)registres.md[0]<<8)+(uint16_t)registres.md[1]);
 	
 	
-	chThdSleepMilliseconds( 1000 );
+//	chThdSleepMilliseconds( 1000 );
 	
 	// We make an average on 10 values
 	for(i = 0; i<10; i++)
 		pressure0 += ((double)calculatePressure()/10);
-	
-	for(i = 0; i<10; i++)
-	{
-	 tabAlti[i] = (float)(44330.75*(1.0-(float)pow(((double)calculatePressure()/(double)pressure0), 0.19029)));
-	}
 }
 
 float getAltitude( void )
 {
-	static int i = 0;
 	float altitude = 0;
 	float pressure = 0;
-	tabAlti[i%10] = (float)(44330.75*(1.0-(float)pow(((double)calculatePressure()/(double)pressure0), 0.19029)));
-	i++;
 
 	pressure = calculatePressure();
 	altitude = (float)(44330.75*(1.0-(float)pow(((double)pressure/(double)pressure0), 0.19029)));

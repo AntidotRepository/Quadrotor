@@ -10,10 +10,13 @@ static const I2CConfig g_i2ccfg =
 	FAST_DUTY_CYCLE_16_9
 };
 
-static WORKING_AREA(waAlti, 512);
+Mailbox mb_alti;
+msg_t mb_alti_buf[MB_MSG_SIZE];
 
 int main(void)
 {
+	msg_t msg;
+	volatile float *data;
 	/* OS init */
 	halInit();
 	chSysInit();
@@ -28,15 +31,17 @@ int main(void)
 	i2cObjectInit(&I2CD1);
 	i2cStart(&I2CD1, &g_i2ccfg);
 	
+	chMBInit(&mb_alti, mb_alti_buf, MB_MSG_SIZE);
+	
 	/* Create one more task */
 	chThdCreateStatic(waAlti, sizeof(waAlti), NORMALPRIO, ThreadAlti, NULL);
 	
 	/* Main task (always present and have priority NORMALPRIO) */
 	while(TRUE)
 	{
-		palSetPad(GPIOB, GPIOB_LED4);
-		chThdSleepMilliseconds(100);
-		palClearPad(GPIOB, GPIOB_LED4);
+		chMBFetch(&mb_alti, &msg, TIME_IMMEDIATE);
+		data=(float*)msg;
+		data = data;
 		chThdSleepMilliseconds(100);
 	}
 }
