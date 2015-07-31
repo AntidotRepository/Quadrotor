@@ -16,7 +16,7 @@ struct DATA_GYRO
 	double		accLacet;
 };
 
-#define MB_MSG_SIZE 6
+#define MB_MSG_SIZE 1
 
 // Task prototype
 static WORKING_AREA(waGyro, 512);

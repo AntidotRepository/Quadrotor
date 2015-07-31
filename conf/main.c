@@ -16,7 +16,7 @@ msg_t mb_gyro_buf[MB_MSG_SIZE];
 int main(void)
 {
 	msg_t msg;
-	volatile DATA_GYRO *data;
+	volatile DATA_GYRO *data_gyro;
 	/* OS init */
 	halInit();
 	chSysInit();
@@ -39,8 +39,9 @@ int main(void)
 	/* Main task (always present and have priority NORMALPRIO) */
 	while(TRUE)
 	{
-		chMBFetch(&mb_gyro, &msg, TIME_INFINITE);
-		data = (DATA_GYRO*)msg;
+		chMBFetch(&mb_gyro, &msg, TIME_IMMEDIATE);
+		data_gyro = (DATA_GYRO*)msg;
+		data_gyro = data_gyro;
 		chThdSleepMilliseconds(100);
 	}
 }
