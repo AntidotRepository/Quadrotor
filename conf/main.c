@@ -16,7 +16,7 @@ msg_t mb_gyro_buf[MB_MSG_SIZE];
 int main(void)
 {
 	msg_t msg;
-	volatile DATA_GYRO data_gyro;
+	volatile DATA_GYRO *data;
 	/* OS init */
 	halInit();
 	chSysInit();
@@ -40,17 +40,7 @@ int main(void)
 	while(TRUE)
 	{
 		chMBFetch(&mb_gyro, &msg, TIME_INFINITE);
-		data_gyro.angleRoulis = (uint16_t)msg;
-		chMBFetch(&mb_gyro, &msg, TIME_INFINITE);
-		data_gyro.angleTangage = (uint16_t)msg;
-		chMBFetch(&mb_gyro, &msg, TIME_INFINITE);
-		data_gyro.angleLacet = (uint16_t)msg;
-		chMBFetch(&mb_gyro, &msg, TIME_INFINITE);
-		data_gyro.accRoulis = (double)msg;
-		chMBFetch(&mb_gyro, &msg, TIME_INFINITE);
-		data_gyro.accTangage = (double)msg;
-		chMBFetch(&mb_gyro, &msg, TIME_INFINITE);
-		data_gyro.accLacet = (double)msg;
+		data = (DATA_GYRO*)msg;
 		chThdSleepMilliseconds(100);
 	}
 }
