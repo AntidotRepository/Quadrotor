@@ -8,9 +8,9 @@
 typedef struct DATA_GYRO DATA_GYRO;
 struct DATA_GYRO
 {
-	uint16_t 	angleTangage;
-	uint16_t 	angleRoulis;
-	uint16_t	angleLacet;
+	int16_t 	angleTangage;
+	int16_t 	angleRoulis;
+	int16_t		angleLacet;
 	double 		accTangage;
 	double		accRoulis;
 	double		accLacet;
