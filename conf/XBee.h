@@ -40,15 +40,18 @@ Exemple d'utilisation:
 typedef struct DATA_COMM DATA_COMM;
 struct DATA_COMM
 {
-	int 	tangage;
-	int 	roulis;
-	int 	lacet;
-	int 	altitude;
+	float 	tangage;
+	float 	roulis;
+	float 	lacet;
+	float 	altitude;
 	int 	battery;
 	int 	signal;
 };
 
+#define MB_XBEE_MSG_SIZE 1
+
 // Task prototype
+static WORKING_AREA(waComSnd, 512);
 msg_t ThreadComSnd( void *arg );
 
 // Functions prototypes

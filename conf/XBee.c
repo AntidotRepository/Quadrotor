@@ -1,5 +1,8 @@
 #include "XBee.h"
 
+extern Mailbox mb_XBee;
+extern msg_t mb_XBee_buf[MB_XBEE_MSG_SIZE];
+
 SerialConfig uartCfg=
 {
 	BAUDRATE,
@@ -7,22 +10,16 @@ SerialConfig uartCfg=
 
 msg_t ThreadComSnd( void *arg )
 {
-	DATA_COMM dataComm;
+	DATA_COMM *dataComm = NULL;
+	msg_t msg;
 	
 	initXBee();
 	
-	// ToDo: Get values from other tasks and send it on serial com
-	
-	dataComm.altitude = 100;
-	dataComm.battery = 99;
-	dataComm.lacet = 98;
-	dataComm.roulis = 97;
-	dataComm.signal = 96;
-	dataComm.tangage = 95;
-	
 	while(TRUE)
-	{
-		sendData(&dataComm);
+	{	
+		chMBFetch(&mb_XBee, &msg, TIME_IMMEDIATE);
+		dataComm = (DATA_COMM*)msg;
+		sendData(dataComm);
 		chThdSleepMilliseconds( 100 );
 	}
 }
@@ -38,9 +35,12 @@ void initXBee()
 
 void sendData( DATA_COMM *data )
 {
-	char bufSend[] = {'T','0','1','5','R','0','4','6','L','0','1','3','A','0','1','2','4','5','B','0','9','5','S','0','5','1'};
+	char bufSend[10] = {0};
+	sprintf(bufSend, "%lf;", data->altitude);
+		
+	//char bufSend[] = {'T','0','1','5','R','0','4','6','L','0','1','3','A','0','1','2','4','5','B','0','9','5','S','0','5','1'};
 
-	sprintf(bufSend, "T%03dR%03dL%03dA%05dB%03dS%03d", data->tangage, data->roulis, data->lacet, data->altitude, data->battery, data->signal);
+	//sprintf(bufSend, "T%03dR%03dL%03dA%05dB%03dS%03d", data->tangage, data->roulis, data->lacet, data->altitude, data->battery, data->signal);
 	sdWrite(&SD2, (uint8_t*)bufSend, strlen(bufSend));
 }
 
