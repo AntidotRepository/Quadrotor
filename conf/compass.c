@@ -1,12 +1,20 @@
 #include "compass.h"
 
+extern Mailbox mb_compass;
+extern msg_t mb_compass_buf[MB_COMPASS_MSG_SIZE];
+
 msg_t ThreadCompass( void *arg )
 {
+	msg_t msg;
+	float angle = 0;
+	
 	initCompass();
 	
 	while(TRUE)
 	{
-		getAngle();
+		angle = getAngle();
+		msg = (msg_t)&angle;
+		chMBPost(&mb_compass, msg, TIME_IMMEDIATE);
 	}
 }
 
@@ -32,7 +40,7 @@ void initCompass()
 	i2cMasterTransmitTimeout(&I2CD1, 0x1E, txbuf, 2, NULL, 0, I2C_TIMEOUT);	//Etat de dormance
 	i2cReleaseBus(&I2CD1);
 	
-	//chThdSleepMilliseconds(6);
+	chThdSleepMilliseconds(6);
 }
 
 float getAngle()

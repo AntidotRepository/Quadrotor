@@ -4,6 +4,8 @@
 #include "hal.h"
 #include "GLOBALES.h"
 
+#define MB_COMPASS_MSG_SIZE 1
+
 // Task prototype
 static WORKING_AREA(waCompass, 256);
 msg_t ThreadCompass( void *arg );
