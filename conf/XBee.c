@@ -36,8 +36,7 @@ void initXBee()
 void sendData( DATA_COMM *data )
 {
 	char bufSend[10] = {0};
-	sprintf(bufSend, "%lf;", data->altitude);
-		
+	sprintf(bufSend, "%d\n", data->lacet);
 	//char bufSend[] = {'T','0','1','5','R','0','4','6','L','0','1','3','A','0','1','2','4','5','B','0','9','5','S','0','5','1'};
 
 	//sprintf(bufSend, "T%03dR%03dL%03dA%05dB%03dS%03d", data->tangage, data->roulis, data->lacet, data->altitude, data->battery, data->signal);
