@@ -50,6 +50,7 @@ int main(void)
 	while(TRUE)
 	{
 		chMBFetch(&mb_compass, &msg, TIME_IMMEDIATE);
+#warning Add a condition to check if we get something in the mailbox... Or maybe useless... #tbc
 		angle = (int*)msg;
 		angle = angle;
 		data_comm.lacet = *angle;

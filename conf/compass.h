@@ -4,6 +4,7 @@
 #include "hal.h"
 #include "GLOBALES.h"
 #include <math.h>
+#include <string.h>
 
 #define MB_COMPASS_MSG_SIZE 			1
 
@@ -55,10 +56,14 @@
 
 // HMC_MODE_REGISTER:
 #define HMC_I2C_HIGH_SPEED				0x80	// Set I2C to 3400kHz
-#define HMC_I2C_NORMAL_SPEED			0x00
+#define HMC_I2C_NORMAL_SPEED			0x00	// Set I2C to normal speed (default)
 
 #define HMC_CONTINUOUS_MEAS_MODE	0x00
 #define HMC_SINGLE_MEAS_MODE			0x01
+
+// HMC_STATUS_REGISTER:
+#define HMC_DATA_OUTPUT_LOCK			0x02
+#define HMC_DATA_OUTPUT_READY			0x01
 
 
 // Task prototype
