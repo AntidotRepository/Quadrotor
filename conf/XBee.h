@@ -42,7 +42,7 @@ struct DATA_COMM
 {
 	float 	tangage;
 	float 	roulis;
-	int 	lacet;
+	float		lacet;
 	float 	altitude;
 	int 	battery;
 	int 	signal;

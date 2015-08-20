@@ -20,7 +20,7 @@ int main(void)
 {
 	msg_t msg;
 	DATA_COMM data_comm;
-	int *angle = NULL;
+	float *angle = NULL;
 	
 	/* OS init */
 	halInit();
@@ -51,7 +51,7 @@ int main(void)
 	{
 		chMBFetch(&mb_compass, &msg, TIME_IMMEDIATE);
 #warning Add a condition to check if we get something in the mailbox... Or maybe useless... #tbc
-		angle = (int*)msg;
+		angle = (float*)msg;
 		angle = angle;
 		data_comm.lacet = *angle;
 		msg = (msg_t)&data_comm;

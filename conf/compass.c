@@ -7,6 +7,8 @@ enum states
 {
 	check,
 	get,
+	calibration,
+	calculation,
 	end
 };
 
@@ -14,17 +16,20 @@ enum states
 msg_t ThreadCompass( void *arg )
 {
 	msg_t msg;
-	int angle = 0;
+	float angle = 0;
 	
 	initCompass();
 	
 	while(TRUE)
 	{
 		angle = getAngle();
-		msg = (msg_t)&angle;
-		chMBPost(&mb_compass, msg, TIME_IMMEDIATE);
-		
-		chThdSleepMilliseconds(70);
+		if(angle >= 0 && angle <=360)
+		{
+			msg = (msg_t)&angle;
+			chMBPost(&mb_compass, msg, TIME_IMMEDIATE);
+			
+			chThdSleepMilliseconds(70);
+		}
 	}
 }
 
@@ -56,7 +61,7 @@ void initCompass()
 	chThdSleepMilliseconds(6);
 }
 
-int16_t getAngle()
+float getAngle()
 {
 	#warning 1 - Add something to handle magnetic distortion due to the quadcopter body
 	#warning 2 - For the moment, the north won't be given accurately when the compass (so the quadcopter) will tilt: Need to be done
@@ -68,8 +73,27 @@ int16_t getAngle()
 	
 	int16_t rawX = 0;
 	int16_t rawY = 0;
+	int16_t rawZ = 0;
 	int16_t ArawX = fabs(rawX);
 	int16_t ArawY = fabs(rawY);
+	int16_t ArawZ = fabs(rawZ);
+	
+	static int16_t maxRawX = 0;
+	static int16_t minRawX = 0;
+	static int16_t maxRawY = 0;
+	static int16_t minRawY = 0;
+	static int16_t maxRawZ = 0;
+	static int16_t minRawZ = 0;
+	
+	int16_t X_offset = 0;
+	int16_t Y_offset = 0;
+	int16_t Z_offset = 0;
+	
+	float average = 0;
+	float X_scale = 0;
+	float Y_scale = 0;
+	float Z_scale = 0;
+	
 	int8_t quad = 0;
 	float ival, oval, aival;
 	
@@ -101,9 +125,50 @@ int16_t getAngle()
 			
 				rawX = rxbuf[0]<<8 | rxbuf[1];
 				rawY = rxbuf[4]<<8 | rxbuf[5];
+				rawZ = rxbuf[2]<<8 | rxbuf[3];
+			
 				ArawX = fabs(rawX);												// We get absolute value of rawX
 				ArawY = fabs(rawY);												// We get absolute value of rawY
+				ArawZ = fabs(rawZ);
 			
+				state = calibration;
+				break;
+			
+			case calibration:
+				/*
+					Code to compensate magnetic distortion
+					http://theboredengineers.com/tag/hmc5883l/
+				*/
+				if(rawX < minRawX)
+					minRawX = rawX;
+				else if(rawX > maxRawX)
+					maxRawX = rawX;
+				if(rawY < minRawY)
+					minRawY = rawY;
+				else if(rawY > maxRawY)
+					maxRawY = rawY;
+				if(rawZ < minRawZ)
+					minRawZ = rawZ;
+				else if(rawZ > maxRawZ)
+					maxRawZ = rawZ;
+				
+				X_offset = (maxRawX+minRawX)/2;
+				Y_offset = (maxRawY+minRawY)/2;
+				Z_offset = (maxRawZ+minRawZ)/2;
+				
+				average = (float)(maxRawX+maxRawY+maxRawZ)/3;
+				X_scale = (float)maxRawX/average;
+				Y_scale = (float)maxRawY/average;
+				Z_scale = (float)maxRawZ/average;
+				
+				rawX = X_scale*(rawX - X_offset);
+				rawY = X_scale*(rawY - Y_offset);
+				rawZ = X_scale*(rawZ - Z_offset);
+				
+				state = calculation;
+				break;
+				
+			case calculation:
 				/*
 					Routine to go faster than using atan
 					Simply copy from this topic: http://www.ccsinfo.com/forum/viewtopic.php?t=50920
@@ -180,7 +245,9 @@ int16_t getAngle()
 				}
 				if (oval<0)
 					oval+=360;
+				state = end;
 				break;
+			
 			case end:
 				break;
 		}
