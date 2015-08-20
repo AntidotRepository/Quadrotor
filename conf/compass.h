@@ -72,6 +72,6 @@ msg_t ThreadCompass( void *arg );
 
 // Functions prototypes
 void initCompass( void );
-int16_t getAngle( void );
+float getAngle( void );
 
 #endif //COMPASS_H
