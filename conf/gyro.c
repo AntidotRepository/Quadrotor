@@ -1,71 +1,74 @@
 #include "gyro.h"
 
 extern Mailbox mb_gyro;
-extern msg_t mb_gyro_buf[MB_MSG_SIZE];
+extern msg_t mb_gyro_buf[MB_GYRO_MSG_SIZE];
 
 msg_t ThreadGyro( void *arg )
 {
 	msg_t msg;
-	
 	DATA_GYRO data;
+	systime_t time = chTimeNow();
+	int refreshRate = 1000/GYRO_REFRESH_RATE;
+	
 	initGyro();
 	
 	while(TRUE)
-	{		
-		// We get informations from sensor and store in it
+	{
+		time += MS2ST(refreshRate);
+		
 		data.angleRoulis = getAngle(REG_GYRO_X);
 		data.angleTangage = getAngle(REG_GYRO_Y);
 		data.angleLacet = getAngle(REG_GYRO_Z);
 		data.accRoulis = getAcceleration(REG_ACCEL_X);
 		data.accTangage =  getAcceleration(REG_ACCEL_Y);
 		data.accLacet = getAcceleration(REG_ACCEL_Z);
+		
 		msg = (msg_t)&data;
 		chMBPost(&mb_gyro, msg, TIME_IMMEDIATE);
-		
-		chThdSleepMilliseconds(2.5); //Refresh rate @400Hz
+		chThdSleepUntil(time);
 	}
 }
 
 void initGyro()
 {
-	//tableau stockage données envoyées sur l'I²C
-	uint8_t txbuf[10] = {0};
-
-	//Initialisation du gyroscope
-	txbuf[0] = 0x6B;																												//Registre
-	txbuf[1] = 0x00;																												//Donnée
+	uint8_t txbuf[2] = {0};
+	
+	// MPU initialization
+	txbuf[0] = MPU_SMPLRT_DIV_ADDR;
+	txbuf[1] = MPU_SMPLRT_DIV_1000Hz;
 	i2cAcquireBus(&I2CD1);																									
-	i2cMasterTransmitTimeout(&I2CD1, 0x69, txbuf, 2, NULL, 0, I2C_TIMEOUT);	//Etat de dormance
+	i2cMasterTransmitTimeout(&I2CD1, MPU_I2C_ADDRESS, txbuf, 2, NULL, 0, I2C_TIMEOUT);
 	i2cReleaseBus(&I2CD1);
 
-	txbuf[0] = 0x19;// registre fréquence échantillonage										//Registre
-	txbuf[1] = 0x14;// Echantillonage à 400Hz																//Donnée
-	i2cAcquireBus(&I2CD1);	
-	i2cMasterTransmitTimeout(&I2CD1, 0x69, txbuf, 2, NULL, 0, I2C_TIMEOUT);	//Réglage de la fréquence d'échantillonage (125Hz)
+	txbuf[0] = MPU_CONFIG_ADDR;
+	txbuf[1] = EXT_SYNC_SET_DISABLE | DLPF_CFG_260Hz;
+	i2cAcquireBus(&I2CD1);																									
+	i2cMasterTransmitTimeout(&I2CD1, MPU_I2C_ADDRESS, txbuf, 2, NULL, 0, I2C_TIMEOUT);
 	i2cReleaseBus(&I2CD1);
-
-	txbuf[0] = 0x1A;																												//Registre
-	txbuf[1] = 0x06;																												//Donnée
-	i2cAcquireBus(&I2CD1);	
-	i2cMasterTransmitTimeout(&I2CD1, 0x69, txbuf, 2, NULL, 0, I2C_TIMEOUT);	//Réglage de la fréquence du filtre passe-bas (5Hz)
+	
+	txbuf[0] = MPU_GYRO_CONFIG_ADDR;
+	txbuf[1] = FS_SEL_500;
+	i2cAcquireBus(&I2CD1);																									
+	i2cMasterTransmitTimeout(&I2CD1, MPU_I2C_ADDRESS, txbuf, 2, NULL, 0, I2C_TIMEOUT);
 	i2cReleaseBus(&I2CD1);
-
-	txbuf[0] = 0x1B;																												//Registre
-	txbuf[1] = 0x18;																												//Donnée
-	i2cAcquireBus(&I2CD1);	
-	i2cMasterTransmitTimeout(&I2CD1, 0x69, txbuf, 2, NULL, 0, I2C_TIMEOUT);	//Soi et la plage de mesure du gyroscope, des valeurs typiques: 0x18 (pas d'auto, 2000deg / s)
+	
+	txbuf[0] = MPU_ACCEL_CONFIG_ADDR;
+	txbuf[1] = FS_SEL_2G;
+	i2cAcquireBus(&I2CD1);																									
+	i2cMasterTransmitTimeout(&I2CD1, MPU_I2C_ADDRESS, txbuf, 2, NULL, 0, I2C_TIMEOUT);
 	i2cReleaseBus(&I2CD1);
-
-	txbuf[0] = 0x1C;																												//Registre
-	txbuf[1] = 0x00;																												//Donnée
-	i2cAcquireBus(&I2CD1);	
-	i2cMasterTransmitTimeout(&I2CD1, 0x69, txbuf, 2, NULL, 0, I2C_TIMEOUT);	//Gamme d'accéléromètre d'auto-test et mesure la fréquence du filtre passe-haut, les valeurs typiques: 0x01 (non auto, 2G, 5 Hz)
+	
+	txbuf[0] = MPU_PWR_MGMT_1_ADDR;
+	txbuf[1] = MPU_ENABLE | PLL_Y_GYROSCOPE | INTERNAL_8MHZ_OSCILLATOR | TEMP_SENS_ENABLE;																												//Donnée																											//Donnée
+	i2cAcquireBus(&I2CD1);																									
+	i2cMasterTransmitTimeout(&I2CD1, MPU_I2C_ADDRESS, txbuf, 2, NULL, 0, I2C_TIMEOUT);
 	i2cReleaseBus(&I2CD1);
 }
 
-int16_t getAngle( int axis )
+float getAngle( int axis )
 {
-	double m_forceVector;
+	float m_forceVector;
+	float res = 0;
 	
 	int16_t angle = 0;
 	
@@ -81,19 +84,22 @@ int16_t getAngle( int axis )
 	angle = rxbuf[0]<<8;
 	angle = angle | (unsigned int)rxbuf[1];
 	
+	
 	// calculer vecteur de force
 	m_forceVector = sqrt( pow(getAcceleration(REG_ACCEL_X), 2 )
 											+ pow(getAcceleration(REG_ACCEL_Y), 2 )
 											+ pow(getAcceleration(REG_ACCEL_Z), 2 ));
-	return acos(getAcceleration(axis)/m_forceVector)*57.295779506;
+	
+	res = acos(getAcceleration(axis)/m_forceVector)*57.295779506;
+	return res;
 }
 
 double getAcceleration( int axis )
 {
 	int16_t accel = 0;
 		
-	uint8_t txbuf[10] = {0};
-	uint8_t rxbuf[10] = {0};
+	uint8_t txbuf[2] = {0};
+	uint8_t rxbuf[2] = {0};
 	
 	txbuf[0] = axis;
 	

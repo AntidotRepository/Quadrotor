@@ -11,7 +11,7 @@ static const I2CConfig g_i2ccfg =
 };
 
 Mailbox mb_gyro;
-msg_t mb_gyro_buf[MB_MSG_SIZE];
+msg_t mb_gyro_buf[MB_GYRO_MSG_SIZE];
 
 int main(void)
 {
@@ -31,7 +31,7 @@ int main(void)
 	i2cObjectInit(&I2CD1);
 	i2cStart(&I2CD1, &g_i2ccfg);
 	
-	chMBInit(&mb_gyro, mb_gyro_buf, MB_MSG_SIZE);
+	chMBInit(&mb_gyro, mb_gyro_buf, MB_GYRO_MSG_SIZE);
 	
 	/* Create tasks */
 	chThdCreateStatic(waGyro, sizeof(waGyro), NORMALPRIO, ThreadGyro, NULL);
