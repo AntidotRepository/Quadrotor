@@ -343,8 +343,8 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>1</Optim>
-            <oTime>0</oTime>
+            <Optim>4</Optim>
+            <oTime>1</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>0</OneElfS>
             <Strict>0</Strict>
@@ -415,9 +415,9 @@
               <FilePath>.\conf\XBee.c</FilePath>
             </File>
             <File>
-              <FileName>compass.c</FileName>
+              <FileName>gyro.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\conf\compass.c</FilePath>
+              <FilePath>.\conf\gyro.c</FilePath>
             </File>
           </Files>
         </Group>

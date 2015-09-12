@@ -1,7 +1,7 @@
 #ifndef GLOBALES_H
 #define GLOBALES_H
 
-
+#define RAD_TO_DEG							0.57.2957795
 
 // ------------------------------------
 // -------------	Motors  -------------
@@ -24,6 +24,7 @@
 // ------------------------------------
 // -----------	  Gyroscop   ----------
 // ------------------------------------
+	#define GYRO_REFRESH_RATE			100		 // Hz
 	#define AXIS_X								0
 	#define AXIS_Y								1
 	#define AXIS_Z								2

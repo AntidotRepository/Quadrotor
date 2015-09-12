@@ -1,7 +1,7 @@
 #include "ch.h"
 #include "hal.h"
 #include "XBee.h"
-#include "compass.h"
+#include "gyro.h"
 
 // I2C Configuration
 static const I2CConfig g_i2ccfg = 
@@ -11,8 +11,8 @@ static const I2CConfig g_i2ccfg =
 	FAST_DUTY_CYCLE_16_9
 };
 
-Mailbox mb_compass;
-msg_t mb_compass_buf[MB_COMPASS_MSG_SIZE];
+Mailbox mb_gyro;
+msg_t mb_gyro_buf[MB_GYRO_MSG_SIZE];
 Mailbox mb_XBee;
 msg_t mb_XBee_buf[MB_XBEE_MSG_SIZE];
 
@@ -20,7 +20,7 @@ int main(void)
 {
 	msg_t msg;
 	DATA_COMM data_comm;
-	float *angle = NULL;
+	DATA_GYRO *data_gyro;
 	
 	/* OS init */
 	halInit();
@@ -32,14 +32,18 @@ int main(void)
 	//I²C 2
 	palSetPadMode(GPIOB, 7, PAL_MODE_ALTERNATE(4) | PAL_STM32_OTYPE_OPENDRAIN);	 /* SCL */
 	palSetPadMode(GPIOB, 6, PAL_MODE_ALTERNATE(4) | PAL_STM32_OTYPE_OPENDRAIN);	 /* SDA */
+	
+	palSetPadMode(GPIOC, 6, PAL_MODE_OUTPUT_PUSHPULL);	// Used to debug
+	palSetPadMode(GPIOC, 8, PAL_MODE_OUTPUT_PUSHPULL);	// Used to debug
+	
 	i2cInit();
 	i2cObjectInit(&I2CD1);
 	i2cStart(&I2CD1, &g_i2ccfg);
 	
-	chMBInit(&mb_compass, mb_compass_buf, MB_COMPASS_MSG_SIZE);
+	chMBInit(&mb_gyro, mb_gyro_buf, MB_GYRO_MSG_SIZE);
 	
 	/* Create one more task */
-	chThdCreateStatic(waCompass, sizeof(waCompass), NORMALPRIO, ThreadCompass, NULL);
+	chThdCreateStatic(waGyro, sizeof(waGyro), NORMALPRIO, ThreadGyro, NULL);
 	
 	// Delay creation of comm task to let time to sensors being initialized and not send shit over comm
 	chThdSleepMilliseconds(1000);
@@ -49,15 +53,14 @@ int main(void)
 	/* Main task (always present and have priority NORMALPRIO) */
 	while(TRUE)
 	{
-		chMBFetch(&mb_compass, &msg, TIME_IMMEDIATE);
+		chMBFetch(&mb_gyro, &msg, TIME_INFINITE);
 #warning Add a condition to check if we get something in the mailbox... Or maybe useless... #tbc
-		angle = (float*)msg;
-		angle = angle;
-		data_comm.lacet = *angle;
+		data_gyro = (DATA_GYRO*)msg;
+		data_comm.roulis = data_gyro->angleRoulis;
 		msg = (msg_t)&data_comm;
 		chMBPost(&mb_XBee, msg, TIME_IMMEDIATE);
 		
-		chThdSleepMilliseconds(100);
+//		chThdSleepMilliseconds(100);
 	}
 }
 
