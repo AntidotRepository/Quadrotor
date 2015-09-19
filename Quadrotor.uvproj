@@ -361,7 +361,7 @@
               <MiscControls></MiscControls>
               <Define>__heap_base__=Image$$RW_IRAM1$$ZI$$Limit __heap_end__=Image$$RW_IRAM2$$Base</Define>
               <Undefine></Undefine>
-              <IncludePath>..\Git_Quadrotor;.\os\kernel\include;.\os\ports\common\ARMCMx;.\os\ports\common\ARMCMx\CMSIS\include;.\os\ports\RVCT\ARMCMx;.\os\ports\RVCT\ARMCMx\STM32L1xx;.\os\hal\include;.\os\hal\platforms;.\os\hal\platforms\STM32;.\os\hal\platforms\STM32\GPIOv2;.\os\hal\platforms\STM32\USARTv1;.\os\hal\platforms\STM32L1xx;.\conf</IncludePath>
+              <IncludePath>..\Git_Quadrotor;.\os\kernel\include;.\os\ports\common\ARMCMx;.\os\ports\common\ARMCMx\CMSIS\include;.\os\ports\RVCT\ARMCMx;.\os\ports\RVCT\ARMCMx\STM32L1xx;.\os\hal\include;.\os\hal\platforms;.\os\hal\platforms\STM32;.\os\hal\platforms\STM32\GPIOv2;.\os\hal\platforms\STM32\USARTv1;.\os\hal\platforms\STM32L1xx;.\conf;.\os\hal\platforms\STM32\I2Cv1</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -413,6 +413,11 @@
               <FileName>XBee.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\conf\XBee.c</FilePath>
+            </File>
+            <File>
+              <FileName>gyro.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\conf\gyro.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -564,6 +569,11 @@
               <FileType>1</FileType>
               <FilePath>.\os\hal\src\serial.c</FilePath>
             </File>
+            <File>
+              <FileName>i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\os\hal\src\i2c.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -588,6 +598,11 @@
               <FileName>serial_lld.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\os\hal\platforms\STM32\USARTv1\serial_lld.c</FilePath>
+            </File>
+            <File>
+              <FileName>i2c_lld.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\os\hal\platforms\STM32\I2Cv1\i2c_lld.c</FilePath>
             </File>
           </Files>
         </Group>

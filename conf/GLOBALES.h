@@ -28,13 +28,7 @@
 	#define AXIS_Y								1
 	#define AXIS_Z								2
 	
-	#define REG_GYRO_X						0x3B		// Vrai registre : 0x43... reprendre les calculs avec ce registre
-	#define REG_GYRO_Y						0x3D		// Vrai registre : 0x45... reprendre les calculs avec ce registre
-	#define REG_GYRO_Z						0x3F		// Vrai registre : 0x47... reprendre les calculs avec ce registre
-	
-	#define REG_ACCEL_X						0x3B
-	#define REG_ACCEL_Y						0x3D
-	#define REG_ACCEL_Z						0x3F
+	#define GYRO_REFRESH_RATE			100
 
 // ------------------------------------
 // ----------	  altimeter   -----------
