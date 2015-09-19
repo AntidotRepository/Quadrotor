@@ -44,6 +44,7 @@
 // ------------------------------------
 // ----------  Communication ----------
 // ------------------------------------
+	#define XBEE_REFRESH_RATE			20				// Hz
 	#define BAUDRATE							115200		// Changer ça à 19200 pour éviter que ça coupe après 5 min de com!
 
 #endif // GLOBALES_H

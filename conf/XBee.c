@@ -12,15 +12,19 @@ msg_t ThreadComSnd( void *arg )
 {
 	DATA_COMM *dataComm = NULL;
 	msg_t msg;
+	systime_t time = chTimeNow();
+	int refreshRate = 1000/XBEE_REFRESH_RATE;
 	
 	initXBee();
 	
 	while(TRUE)
 	{	
+		time += MS2ST(refreshRate);
 		chMBFetch(&mb_XBee, &msg, TIME_IMMEDIATE);
 		dataComm = (DATA_COMM*)msg;
 		sendData(dataComm);
-		chThdSleepMilliseconds( 100 );
+		
+		chThdSleepUntil(time);
 	}
 }
 
