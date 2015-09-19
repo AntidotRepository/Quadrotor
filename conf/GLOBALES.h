@@ -46,4 +46,9 @@
 // ------------------------------------
 	#define BAUDRATE							115200		// Changer ça à 19200 pour éviter que ça coupe après 5 min de com!
 
+// ------------------------------------
+// -----------   Compass   ------------
+// ------------------------------------
+	#define COMPASS_REFRESH_RATE	100				// Hz
+
 #endif // GLOBALES_H

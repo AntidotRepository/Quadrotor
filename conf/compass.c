@@ -17,18 +17,22 @@ msg_t ThreadCompass( void *arg )
 {
 	msg_t msg;
 	float angle = 0;
+	systime_t time = chTimeNow();
+	int refreshRate = 1000/COMPASS_REFRESH_RATE;
 	
 	initCompass();
 	
 	while(TRUE)
 	{
+		time += MS2ST(refreshRate);
+		
 		angle = getAngle();
 		if(angle >= 0 && angle <=360)
 		{
 			msg = (msg_t)&angle;
 			chMBPost(&mb_compass, msg, TIME_IMMEDIATE);
 			
-			chThdSleepMilliseconds(70);
+			chThdSleepUntil(time);
 		}
 	}
 }
