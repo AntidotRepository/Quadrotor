@@ -40,6 +40,7 @@
 // ----------	  altimeter   -----------
 // ------------------------------------
 	#define OSS 3 //Oversampling settings (taux d'échantillonage du BMP085 compris entre 0 (faible taux mais peu énergivore) et 3 (8 échantillons avant envois mais très énergivore))
+	#define ALTI_REFRESH_RATE			10				// Hz
 	
 // ------------------------------------
 // ----------  Communication ----------

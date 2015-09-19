@@ -14,16 +14,21 @@ msg_t ThreadAlti( void *arg )
 {
 	float alti = 0;
 	msg_t msg;
+	systime_t time = chTimeNow();
+	int refreshRate = 1000/ALTI_REFRESH_RATE;
+	
 	initAlti();
 	
 	while(TRUE)
 	{
+		time += MS2ST(refreshRate);
+		
 		alti = getAltitude();
 		
 		msg = (msg_t)&alti;
 		chMBPost(&mb_alti, msg, TIME_IMMEDIATE);
 		
-		chThdSleepMilliseconds( 100 ); // Refreshing @10Hz
+		chThdSleepUntil(time);
 	}
 }
 
