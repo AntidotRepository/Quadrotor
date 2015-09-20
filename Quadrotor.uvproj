@@ -343,7 +343,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>4</Optim>
+            <Optim>1</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>0</OneElfS>
@@ -418,6 +418,11 @@
               <FileName>gyro.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\conf\gyro.c</FilePath>
+            </File>
+            <File>
+              <FileName>compass.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\conf\compass.c</FilePath>
             </File>
           </Files>
         </Group>
