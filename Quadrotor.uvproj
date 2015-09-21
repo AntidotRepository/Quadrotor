@@ -424,6 +424,11 @@
               <FileType>1</FileType>
               <FilePath>.\conf\compass.c</FilePath>
             </File>
+            <File>
+              <FileName>alti.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\conf\alti.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
