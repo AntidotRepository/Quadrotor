@@ -118,7 +118,7 @@
 /*
  * PWM driver system settings.
  */
-#define STM32_PWM_USE_TIM2                  FALSE
+#define STM32_PWM_USE_TIM2                  TRUE
 #define STM32_PWM_USE_TIM3                  FALSE
 #define STM32_PWM_USE_TIM4                  FALSE
 #define STM32_PWM_TIM2_IRQ_PRIORITY         7

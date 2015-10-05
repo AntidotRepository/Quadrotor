@@ -32,6 +32,10 @@ msg_t ThreadCompass( void *arg )
 			msg = (msg_t)&angle;
 			chMBPost(&mb_compass, msg, TIME_IMMEDIATE);
 			
+			if(time < chTimeNow())
+			{
+				time = chTimeNow();
+			}
 			chThdSleepUntil(time);
 		}
 	}
@@ -67,9 +71,10 @@ void initCompass()
 
 float getNorth()
 {
+	#ifdef DEBUG_WARNINGS
 	#warning 1 - For the moment, the north won't be given accurately when the compass (so the quadcopter) will tilt: Need to be done
 	#warning 2 - Should be better to add something to compensate the magnetic declination (discussed here: http://bildr.org/2012/02/hmc5883l_arduino/)
-	
+	#endif
 	int state = check;
 	uint8_t txbuf[2] = {0};
 	uint8_t rxbuf[6] = {0};
@@ -246,7 +251,10 @@ float getNorth()
 				}
 				if (oval<0)
 					oval+=360;
-				state = end;
+				if(oval > 0 && oval < 360)
+					state = end;
+				else
+					state = check;
 				break;
 			
 			case end:

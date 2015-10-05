@@ -24,6 +24,10 @@ msg_t ThreadComSnd( void *arg )
 		dataComm = (DATA_COMM*)msg;
 		sendData(dataComm);
 		
+		if(time < chTimeNow())
+		{
+			time = chTimeNow();
+		}
 		chThdSleepUntil(time);
 	}
 }
@@ -45,10 +49,13 @@ void sendData( DATA_COMM *data )
 	sdWrite(&SD2, (uint8_t*)bufSend, strlen(bufSend));
 }
 
+#ifdef DEBUG_WARNINGS
 #warning Function rcvData not tested
+#endif
 DATA_COMM rcvData()
 {	
-	int i = 0;
+	DATA_COMM data;
+/*	int i = 0;
 	int j = 0;
 	DATA_COMM data;
 	char bufRead[] = {'T','0','1','5','R','0','4','6','L','0','1','3','A','0','1','2','4','5','B','0','9','5','S','0','5','1','\0'};
@@ -69,6 +76,6 @@ DATA_COMM rcvData()
 		}
 	}
 	while(sscanf(bufFinalString, "T%dR%dL%dA%dB%dS%d", &data.tangage, &data.roulis, &data.lacet, &data.altitude, &data.battery, &data.signal)!=6);
-
+*/
 	return data;
 }

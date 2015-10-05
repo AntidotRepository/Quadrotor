@@ -1,10 +1,13 @@
 #ifndef GLOBALES_H
 #define GLOBALES_H
 
+// Uncomment this line to show my own warnings
+//#define DEBUG_WARNINGS
 
 // ------------------------------------
 // -------------	Motors  -------------
 // ------------------------------------
+	#define MOTORS_REFRESH_RATE		STABI_REFRESH_RATE
 	#define MOTOR_1								0
 	#define MOTOR_2								1
 	#define MOTOR_3								2
@@ -44,7 +47,12 @@
 // ------------------------------------
 // -----------   Compass   ------------
 // ------------------------------------
-	#define COMPASS_REFRESH_RATE	10					// Hz
+	#define COMPASS_REFRESH_RATE	10				// Hz
+
+// ------------------------------------
+// ---------  Stabilization   ---------
+// ------------------------------------
+	#define STABI_REFRESH_RATE		10				// Hz
 
 #endif // GLOBALES_H
 

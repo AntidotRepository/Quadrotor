@@ -25,6 +25,11 @@ msg_t ThreadGyro( void *arg )
 		
 		msg = (msg_t)&data;
 		chMBPost(&mb_gyro, msg, TIME_IMMEDIATE);
+		
+		if(time < chTimeNow())
+		{
+			time = chTimeNow();
+		}
 		chThdSleepUntil(time);
 	}
 }

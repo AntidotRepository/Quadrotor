@@ -41,6 +41,7 @@
  */
 
 #include "ch.h"
+#include "hal.h"
 
 #if !CH_NO_IDLE_THREAD || defined(__DOXYGEN__)
 /**

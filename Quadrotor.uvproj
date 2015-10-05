@@ -361,7 +361,7 @@
               <MiscControls></MiscControls>
               <Define>__heap_base__=Image$$RW_IRAM1$$ZI$$Limit __heap_end__=Image$$RW_IRAM2$$Base</Define>
               <Undefine></Undefine>
-              <IncludePath>..\Git_Quadrotor;.\os\kernel\include;.\os\ports\common\ARMCMx;.\os\ports\common\ARMCMx\CMSIS\include;.\os\ports\RVCT\ARMCMx;.\os\ports\RVCT\ARMCMx\STM32L1xx;.\os\hal\include;.\os\hal\platforms;.\os\hal\platforms\STM32;.\os\hal\platforms\STM32\GPIOv2;.\os\hal\platforms\STM32\USARTv1;.\os\hal\platforms\STM32L1xx;.\conf;.\os\hal\platforms\STM32\I2Cv1</IncludePath>
+              <IncludePath>..\Git_Quadrotor;.\os\kernel\include;.\os\ports\common\ARMCMx;.\os\ports\common\ARMCMx\CMSIS\include;.\os\ports\RVCT\ARMCMx;.\os\ports\RVCT\ARMCMx\STM32L1xx;.\os\hal\include;.\os\hal\platforms;.\os\hal\platforms\STM32;.\os\hal\platforms\STM32\GPIOv2;.\os\hal\platforms\STM32\USARTv1;.\os\hal\platforms\STM32\TIMv1;.\os\hal\platforms\STM32\I2Cv1;.\os\hal\platforms\STM32L1xx;.\conf</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -428,6 +428,21 @@
               <FileName>alti.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\conf\alti.c</FilePath>
+            </File>
+            <File>
+              <FileName>deriv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\conf\deriv.c</FilePath>
+            </File>
+            <File>
+              <FileName>motors.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\conf\motors.c</FilePath>
+            </File>
+            <File>
+              <FileName>stabi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\conf\stabi.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -584,6 +599,11 @@
               <FileType>1</FileType>
               <FilePath>.\os\hal\src\i2c.c</FilePath>
             </File>
+            <File>
+              <FileName>pwm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\os\hal\src\pwm.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -613,6 +633,11 @@
               <FileName>i2c_lld.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\os\hal\platforms\STM32\I2Cv1\i2c_lld.c</FilePath>
+            </File>
+            <File>
+              <FileName>pwm_lld.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\os\hal\platforms\STM32\TIMv1\pwm_lld.c</FilePath>
             </File>
           </Files>
         </Group>

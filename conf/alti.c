@@ -8,7 +8,7 @@ static long_BMP085_reg g_long_registres;
 static PressureVar variables;
 
 extern Mailbox mb_alti;
-extern msg_t mb_alti_buf[MB_MSG_SIZE];
+extern msg_t mb_alti_buf[MB_ALTI_MSG_SIZE];
 
 msg_t ThreadAlti( void *arg )
 {
@@ -28,6 +28,10 @@ msg_t ThreadAlti( void *arg )
 		msg = (msg_t)&alti;
 		chMBPost(&mb_alti, msg, TIME_IMMEDIATE);
 		
+		if(time < chTimeNow())
+		{
+			time = chTimeNow();
+		}
 		chThdSleepUntil(time);
 	}
 }

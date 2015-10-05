@@ -57,7 +57,7 @@ struct long_BMP085_reg
 	int16_t md; //Registre 0xBE
 };
 
-#define MB_MSG_SIZE 1
+#define MB_ALTI_MSG_SIZE 1
 
 // Task prototype
 static WORKING_AREA(waAlti, 512);
